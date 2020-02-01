@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <title>CRUD Example</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.bootcss.com/element-ui/2.12.0/theme-chalk/index.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://cdn.bootcss.com/element-ui/2.12.0/index.js"></script>
+        <script src="../dist/cl-crud.min.js"></script>
+        <style>
+            html,
+            body,
+            #app {
+                height: 100vh;
+                width: 100vw;
+            }
+
+            * {
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <cl-crud @load="onLoad">
+                <template #table-column-images="{scope}">
+                    <el-image
+                        :src="scope.row.images[0]"
+                        :preview-src-list="scope.row.images"
+                        :style='{
+                            height: "100px",
+                            width: "100px"
+                        }'
+                    ></el-image>
+                </template>
+
+                <template #slot-append>
+                    <p @click="openForm_Loading">测试loading</p>
+                </template>
+
+                <template #slot-append2>
+                    <el-button size="mini" @click="openForm_CRUD">内嵌crud</el-button>
+                </template>
+
+                <template #slot-validate="{scope}">
+                    <el-form-item
+                        v-for="(item, index) in scope.vads"
+                        :key="index"
+                        :prop="'vads.' + index + '.val'"
+                        :rules="{ required: true }"
+                    >
+                        <el-input v-model="item.val"></el-input>
+                    </el-form-item>
+
+                    <el-button @click="addVad(scope.vads)">添加行</el-button>
+                </template>
+            </cl-crud>
+            <cl-form ref="cl-form"></cl-form>
+        </div>
+
+        <script>
+            Vue.use(CRUD, {
+                crud: {
+                    table: {
+                        op: {
+                            // name: 'dropdown-menu', // 下拉模式
+
+                            ['dropdown-menu']: {
+                                width: '160px'
+                            }
+                        }
+                    },
+                    fn: {
+                        permission() {
+                            return Promise.resolve({
+                                add: false,
+                                update: false,
+                                delete: false
+                            });
+                        }
+                    }
+                }
+            });
+
+            new Vue({
+                el: '#app',
+
+                data() {
+                    return {
+                        vad: {
+                            list: []
+                        }
+                    };
+                },
+
+                methods: {
+                    onLoad({ ctx, app }) {
+                        ctx.service({
+                            page: p => {
+                                console.log('page', p);
+                                return Promise.resolve({
+                                    list: [
+                                        {
+                                            id: 1,
+                                            name: '刘一',
+                                            process: 42.2,
+                                            endTime: '2019年09月02日',
+                                            price: 75.99,
+                                            salesRate: 52.2,
+                                            salesStatus: 1,
+                                            images: [
+                                                'https://dss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3783120155,1061441906&fm=26&gp=0.jpg'
+                                            ]
+                                        },
+                                        {
+                                            id: 2,
+                                            name: '陈二',
+                                            process: 35.2,
+                                            endTime: '2019年09月05日',
+                                            price: 242.1,
+                                            salesRate: 72.1,
+                                            salesStatus: 1,
+                                            images: []
+                                        },
+                                        {
+                                            id: 3,
+                                            name: '张三',
+                                            process: 10.2,
+                                            endTime: '2019年09月12日',
+                                            price: 74.11,
+                                            salesRate: 23.9,
+                                            salesStatus: 0,
+                                            images: []
+                                        },
+                                        {
+                                            id: 4,
+                                            name: '李四',
+                                            process: 75.5,
+                                            endTime: '2019年09月13日',
+                                            price: 276.64,
+                                            salesRate: 47.2,
+                                            salesStatus: 0,
+                                            images: []
+                                        },
+                                        {
+                                            id: 5,
+                                            name: '王五',
+                                            process: 25.4,
+                                            endTime: '2019年09月18日',
+                                            price: 160.23,
+                                            salesRate: 28.3,
+                                            salesStatus: 1,
+                                            images: []
+                                        },
+                                        {
+                                            id: 6,
+                                            name: '赵六',
+                                            process: 9.8,
+                                            endTime: '2019年09月20日',
+                                            price: 219.52,
+                                            salesRate: 24.4,
+                                            salesStatus: 0,
+                                            images: []
+                                        }
+                                    ],
+                                    pagination: {
+                                        page: 1,
+                                        size: 20,
+                                        total: 6
+                                    }
+                                });
+                            },
+                            info: d => {
+                                console.log('info', d);
+                                return Promise.resolve();
+                            },
+                            add: d => {
+                                console.log('add', d);
+                                return Promise.resolve();
+                            },
+                            delete: d => {
+                                console.log('delete', d);
+                                return Promise.resolve();
+                            },
+                            update: d => {
+                                console.log('update', d);
+                                return Promise.resolve();
+                            }
+                        })
+                            .set('permission', () => {
+                                return {
+                                    add: true,
+                                    update: true,
+                                    delete: true
+                                };
+                            })
+                            .set('table', {
+                                columns: [
+                                    {
+                                        type: 'selection',
+                                        align: 'center',
+                                        width: 60
+                                    },
+                                    {
+                                        label: '图片',
+                                        prop: 'images',
+                                        align: 'center',
+                                        width: '200'
+                                    },
+                                    {
+                                        label: '花名',
+                                        prop: 'name',
+                                        align: 'center',
+                                        children: [
+                                            {
+                                                label: '进展',
+                                                prop: 'process',
+                                                align: 'center'
+                                            },
+                                            {
+                                                label: '花名2',
+                                                prop: 'name',
+                                                children: [
+                                                    {
+                                                        label: '总量',
+                                                        prop: 'price',
+                                                        align: 'center'
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        label: '销售',
+                                        prop: 'salesRate',
+                                        align: 'center'
+                                    },
+                                    {
+                                        label: '最后期限',
+                                        prop: 'endTime',
+                                        align: 'center'
+                                    }
+                                ],
+
+                                op: {
+                                    props: {
+                                        width: 250
+                                    },
+
+                                    layout: ['slot-append', 'slot-append2', 'edit', 'delete']
+                                }
+                            })
+                            .set('upsert', {
+                                props: {
+                                    labelWidth: '150px'
+                                },
+                                items: [
+                                    {
+                                        prop: 'vads',
+                                        value: [],
+                                        label: '动态增减表单验证',
+                                        component: {
+                                            name: 'slot-validate'
+                                        }
+                                    },
+                                    {
+                                        label: '数字框',
+                                        prop: 'a1',
+                                        component: {
+                                            name: 'el-input-number'
+                                        }
+                                    },
+                                    {
+                                        label: '输入框',
+                                        prop: 'a',
+                                        component: {
+                                            name: 'el-input',
+                                            attrs: {
+                                                placeholder: '请输入关键字'
+                                            }
+                                        }
+                                    },
+                                    {
+                                        label: '下拉选择',
+                                        prop: 'b',
+                                        value: [1, 2],
+                                        component: {
+                                            name: 'el-select',
+                                            props: {
+                                                multiple: true
+                                            },
+                                            options: [
+                                                {
+                                                    label: '选项1',
+                                                    value: 1
+                                                },
+                                                {
+                                                    label: '选项2',
+                                                    value: 2
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        label: '时间',
+                                        prop: 'c',
+                                        component: {
+                                            name: 'el-date-picker'
+                                        }
+                                    },
+                                    {
+                                        label: '多选',
+                                        prop: 'd',
+                                        value: [1],
+                                        component: {
+                                            name: 'el-checkbox-group',
+                                            options: [
+                                                {
+                                                    label: '选项1',
+                                                    value: 1
+                                                },
+                                                {
+                                                    label: '选项2',
+                                                    value: 2
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            })
+                            .set('search', {
+                                adv: {
+                                    items: [
+                                        {
+                                            label: '输入框',
+                                            prop: 'a',
+                                            component: {
+                                                name: 'el-input',
+                                                attrs: {
+                                                    placeholder: '请输入关键字'
+                                                }
+                                            }
+                                        },
+                                        {
+                                            label: '下拉选择',
+                                            prop: 'b',
+                                            value: [1, 2],
+                                            component: {
+                                                name: 'el-select',
+                                                props: {
+                                                    multiple: true
+                                                },
+                                                options: [
+                                                    {
+                                                        label: '选项1',
+                                                        value: 1
+                                                    },
+                                                    {
+                                                        label: '选项2',
+                                                        value: 2
+                                                    }
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            label: '时间',
+                                            prop: 'c',
+                                            component: {
+                                                name: 'el-date-picker'
+                                            }
+                                        },
+                                        {
+                                            label: '多选',
+                                            prop: 'd',
+                                            value: [1],
+                                            component: {
+                                                name: 'el-checkbox-group',
+                                                options: [
+                                                    {
+                                                        label: '选项1',
+                                                        value: 1
+                                                    },
+                                                    {
+                                                        label: '选项2',
+                                                        value: 2
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+
+                                query: {
+                                    list: [
+                                        {
+                                            label: '类目1',
+                                            value: 1
+                                        },
+                                        {
+                                            label: '类目2',
+                                            value: 0
+                                        }
+                                    ]
+                                }
+                            })
+                            .set('layout', [
+                                [
+                                    'refresh-btn',
+                                    'add-btn',
+                                    'multi-delete-btn',
+                                    'query',
+                                    'flex1',
+                                    'search-key',
+                                    'adv-btn'
+                                ],
+                                ['data-table'],
+                                ['flex1', 'pagination']
+                            ])
+                            .done();
+                        app.refresh();
+                    },
+
+                    openForm_Loading() {
+                        const $ = this.$refs['cl-form'].open({
+                            props: {
+                                title: '测试loading',
+                                width: '500px'
+                            },
+
+                            items: [
+                                {
+                                    prop: 'tl',
+                                    hidden: false,
+                                    component: {
+                                        name: 'test-loading',
+
+                                        data() {
+                                            return {
+                                                status: 'loading'
+                                            };
+                                        },
+
+                                        mounted() {
+                                            this.status = 'loading';
+                                            $.showLoading('加载中');
+
+                                            setTimeout(() => {
+                                                this.status = 'done';
+                                                $.hideLoading();
+                                            }, 1000);
+                                        },
+
+                                        render(h) {
+                                            return h('p', this.status);
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+
+                        console.log($.getRef)
+                    },
+
+                    openForm_CRUD() {
+                        this.$refs['cl-form'].open({
+                            props: {
+                                title: '内嵌CRUD',
+                                width: '800px',
+                                size: 'mini'
+                            },
+
+                            items: [
+                                {
+                                    props: {
+                                        labelWidth: '0px'
+                                    },
+
+                                    component: {
+                                        name: 'cl-crud',
+
+                                        on: {
+                                            load({ ctx, app }) {
+                                                ctx.service({
+                                                    page: p => {
+                                                        return Promise.resolve({
+                                                            list: [
+                                                                {
+                                                                    id: 1,
+                                                                    name: 'A',
+                                                                    age: 26
+                                                                }
+                                                            ],
+                                                            pagination: {
+                                                                total: 1,
+                                                                page: 1,
+                                                                size: 10
+                                                            }
+                                                        });
+                                                    }
+                                                })
+                                                    .set('table', {
+                                                        columns: [
+                                                            {
+                                                                label: '姓名',
+                                                                prop: 'name'
+                                                            },
+                                                            {
+                                                                label: '年龄',
+                                                                prop: 'age'
+                                                            }
+                                                        ],
+
+                                                        op: {
+                                                            visible: false
+                                                        }
+                                                    })
+                                                    .set('layout', [
+                                                        ['refresh-btn', 'flex1', 'search-key'],
+                                                        ['data-table'],
+                                                        ['flex1', 'pagination']
+                                                    ])
+                                                    .done();
+
+                                                app.refresh();
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                    },
+
+                    addVad(list) {
+                        list.push({
+                            val: ''
+                        });
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
