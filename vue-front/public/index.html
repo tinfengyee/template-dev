@@ -7,10 +7,10 @@
 		<meta name="renderer" content="webkit" />
 		<meta name="viewport" content />
 		<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-		<title>COOL-ADMIN</title>
-		<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.css) { %>
+		<title><%= webpackConfig.name %></title>
+		<!-- <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.css) { %>
 		<link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="stylesheet" />
-		<% } %>
+		<% } %> -->
 		<style>
 			html,
 			body,
@@ -80,14 +80,14 @@
 
 				<div class="footer">
 					<a href="https://www.cool-admin.com/" target="_blank">
-						https://www.cool-admin.com/
+						https://www.baidu.com/
 					</a>
 				</div>
 			</div>
 		</div>
 
-		<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
+		<!-- <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
 		<script src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
-		<% } %>
+		<% } %> -->
 	</body>
 </html>

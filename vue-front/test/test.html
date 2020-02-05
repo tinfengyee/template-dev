@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+        background-color: #ff6666;
+        width: 100%;
+        height: 2000px;
+        position: relative;
+      }
+      .back-top:hover {
+        background-image: url(//s2.hdslb.com/bfs/static/blive/blfe-dynamic-web/static/img/rocket_frame.f7563b84.png);
+        -webkit-animation: rocket steps(1, start) 0.5s infinite;
+        animation: rocket steps(1, start) 0.5s infinite;
+      }
+      .back-top {
+        position: fixed;
+        bottom: 50px;
+        width: 150px;
+        height: 174px;
+        cursor: pointer;
+        z-index: 998;
+        background-position: 0 0;
+        text-align: center;
+        background-image: url(//s2.hdslb.com/bfs/static/blive/blfe-dynamic-web/static/img/rocket_top.bcc748c3.png);
+        background-repeat: no-repeat;
+      }
+      @keyframes rocket {
+        0% {
+          background-position: 0 0;
+        }
+        25% {
+          background-position: -150px 0;
+        }
+
+        50% {
+          background-position: -300px 0;
+        }
+        75% {
+          background-position: -450px 0;
+        }
+        100% {
+          background-position: -600px 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="back-top" style="right: 0px;display: none;"></div>
+    <script>
+      const back = document.querySelector('.back-top')
+      let scrollTop = 0
+      window.addEventListener('scroll', e => {
+        console.log('1');
+
+        scrollTop = window.pageYOffset
+        if (scrollTop > 500) {
+          back.style.display = ''
+        } else {
+          back.style.display = 'none'
+        }
+      })
+
+      back.addEventListener('click', e => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        })
+      })
+    </script>
+  </body>
+</html>

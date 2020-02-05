@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
+import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import Viewer from 'v-viewer'
 import { bootstrap } from '@/cool/core'
 

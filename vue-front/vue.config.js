@@ -1,12 +1,11 @@
 const path = require('path')
 
 const isProduction = process.env.NODE_ENV === 'production'
-
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const cdn = {
+/* const cdn = {
   dev: {
     css: ['https://cdn.staticfile.org/element-ui/2.13.0/theme-chalk/index.css']
   },
@@ -31,14 +30,12 @@ const cdn = {
       'https://cdn.jsdelivr.net/npm/vue-echarts@4.0.2'
     ]
   }
-}
+} */
 
 module.exports = {
   publicPath: '/',
   lintOnSave: true,
   productionSourceMap: false,
-  parallel: require('os').cpus().length > 1,
-
   css: {
     extract: isProduction,
     sourceMap: false,
@@ -101,10 +98,14 @@ module.exports = {
       .end()
 
     // 引入cdn
-    config.plugin('html').tap(args => {
-      args[0].cdn = cdn[isProduction ? 'pro' : 'dev']
-      return args
-    })
+    // config.plugin('html').tap(args => {
+    //   args[0].cdn = cdn[isProduction ? 'pro' : 'dev']
+    //   return args
+    // })
+
+    config
+      // https://webpack.js.org/configuration/devtool/#development
+      .when(process.env.NODE_ENV === 'development', config => config.devtool('cheap-source-map'))
 
     if (isProduction) {
       config.performance.set('hints', false)
@@ -118,6 +119,11 @@ module.exports = {
             priority: 10,
             chunks: 'initial'
           },
+          elementUI: {
+            name: 'chunk-elementUI', // split elementUI into a single package
+            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+          },
           commons: {
             name: 'chunk-cool',
             test: resolve('src/cool'),
@@ -130,20 +136,32 @@ module.exports = {
     }
   },
 
-  configureWebpack: config => {
-    if (isProduction) {
-      config.externals = {
-        vue: 'Vue',
-        'vue-router': 'VueRouter',
-        'element-ui': 'ELEMENT',
-        vuex: 'Vuex',
-        axios: 'axios',
-        mockjs: 'Mock',
-        nprogress: 'NProgress',
-        quill: 'Quill',
-        viewer: 'Viewer',
-        echarts: 'echarts',
-        'vue-echarts': 'VueECharts'
+  // configureWebpack: config => {
+  // provide the app's title in webpack's name field, so that
+  // it can be accessed in index.html to inject the correct title.
+  // if (isProduction) {
+  //   config.externals = {
+  //     vue: 'Vue',
+  //     'vue-router': 'VueRouter',
+  //     'element-ui': 'ELEMENT',
+  //     vuex: 'Vuex',
+  //     axios: 'axios',
+  //     mockjs: 'Mock',
+  //     nprogress: 'NProgress',
+  //     quill: 'Quill',
+  //     viewer: 'Viewer',
+  //     echarts: 'echarts',
+  //     'vue-echarts': 'VueECharts'
+  //   }
+  // }
+  // }
+  configureWebpack: {
+    // provide the app's title in webpack's name field, so that
+    // it can be accessed in index.html to inject the correct title.
+    name: 'Vue Front',
+    resolve: {
+      alias: {
+        '@': resolve('src')
       }
     }
   }
